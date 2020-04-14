@@ -2,6 +2,11 @@ import firebase from '../firebase';
 
 const db = firebase.firestore();
 
+export enum UserType {
+  CALLER,
+  CALLEE,
+}
+
 class WebRTC {
   private readonly configuration = {
     iceServers: [
@@ -14,6 +19,8 @@ class WebRTC {
     ],
     iceCandidatePoolSize: 10,
   };
+
+  public userType: UserType = UserType.CALLEE;
 
   private isInitialized = false;
 
@@ -43,6 +50,7 @@ class WebRTC {
   }
 
   public async createRoom() {
+    this.userType = UserType.CALLER;
     const roomRef = db.collection('rooms').doc();
 
     // console.log('Create PeerConnection with configuration: ', this.configuration);
@@ -117,6 +125,7 @@ class WebRTC {
   }
 
   public async joinRoom(roomId: string) {
+    this.userType = UserType.CALLEE;
     const roomRef = db.collection('rooms').doc(`${roomId}`);
     const roomSnapshot = await roomRef.get();
 

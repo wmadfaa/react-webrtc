@@ -1,6 +1,8 @@
 import React, {useEffect} from 'react';
 import {useParams} from 'react-router-dom';
-import WebRTC from '../../controllers/webrtc.controller';
+import classNames from 'classnames';
+
+import WebRTC, {UserType} from '../../controllers/webrtc.controller';
 
 import useStyles from './chatRoom.styles';
 
@@ -12,33 +14,29 @@ const ChatRoomScreen: React.FC = () => {
 
   useEffect(() => {
     WebRTC.init().then(async (webrtc) => {
-      if (localVideoRef.current) {
+      if (localVideoRef.current && remoteVideoRef.current) {
         localVideoRef.current.srcObject = webrtc.getLocalStream();
+        if (webrtc.userType === UserType.CALLEE && roomId) {
+          await webrtc.joinRoom(roomId);
+        }
+        remoteVideoRef.current.srcObject = WebRTC.getRemoteStream();
       }
     });
   }, []);
 
-  const handleJoinRoom = async () => {
-    if (remoteVideoRef.current && roomId) {
-      await WebRTC.joinRoom(roomId);
-      remoteVideoRef.current.srcObject = WebRTC.getRemoteStream();
-    }
-  };
-
   return (
     <div className={classes.root}>
-      <button onClick={handleJoinRoom}>join</button>
       <span>chat room: {roomId}</span>
       <div>
         <video
           ref={localVideoRef}
-          className={classes.localVideo}
+          className={classNames(classes.video, classes.localVideo)}
           muted
           autoPlay
           playsInline></video>
         <video
           ref={remoteVideoRef}
-          className={classes.remoteVideo}
+          className={classNames(classes.video, classes.remoteVideo)}
           autoPlay
           playsInline></video>
       </div>

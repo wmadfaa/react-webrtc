@@ -7,18 +7,25 @@ export default makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  localVideo: {
+  video: {
     display: 'inline-block',
     verticalAlign: 'middle',
     backgroundColor: '#000',
     backgroundSize: 'cover',
     overflow: 'hidden',
   },
+  localVideo: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 256,
+    zIndex: 1,
+  },
   remoteVideo: {
-    display: 'inline-block',
-    verticalAlign: 'middle',
-    backgroundColor: '#000',
-    backgroundSize: 'cover',
-    overflow: 'hidden',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100vw',
+    height: '100vh',
   },
 });
