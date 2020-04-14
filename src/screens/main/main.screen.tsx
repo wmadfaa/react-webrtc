@@ -1,4 +1,5 @@
 import React from 'react';
+import {useHistory} from 'react-router-dom';
 import {
   Card,
   CardActions,
@@ -8,44 +9,64 @@ import {
   CardHeader,
   IconButton,
   CardMedia,
+  CircularProgress,
 } from '@material-ui/core';
-// import Typography from '@material-ui/core/Typography';
 import {
-  CameraAltRounded,
   GroupAddRounded,
   GroupRounded,
   SettingsRounded,
 } from '@material-ui/icons';
 
+import ROUTES from '../../routes';
+import WebRTC from '../../controllers/webrtc.controller';
+
 import useStyles from './main.styles';
 
 interface State {
+  roomId?: string;
   isCreateRoomEnabled: boolean;
   isJoinRoomEnabled: boolean;
+  loading: {
+    createRoom: boolean;
+  };
 }
 
 const MainScreen: React.FC = () => {
+  const history = useHistory();
   const classes = useStyles();
   const localVideoRef = React.useRef<HTMLVideoElement>(null);
   const [state, setState] = React.useState<State>({
     isCreateRoomEnabled: false,
     isJoinRoomEnabled: false,
+    loading: {
+      createRoom: false,
+    },
   });
 
-  const openUserMedia = async () => {
-    if (!localVideoRef.current) return;
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
+  React.useEffect(() => {
+    WebRTC.init().then((webrtc) => {
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = webrtc.getLocalStream();
+        setState((prev) => ({
+          ...prev,
+          isCreateRoomEnabled: true,
+          isJoinRoomEnabled: true,
+        }));
+      }
     });
+  }, []);
 
-    localVideoRef.current.srcObject = stream;
-
+  const handleCreateRoom = async () => {
     setState((prev) => ({
       ...prev,
-      isCreateRoomEnabled: true,
-      isJoinRoomEnabled: true,
+      loading: {...prev.loading, createRoom: true},
     }));
+    const roomId = await WebRTC.createRoom();
+    setState((prev) => ({
+      ...prev,
+      loading: {...prev.loading, createRoom: false},
+    }));
+    history.push(ROUTES.CHAT_ROOM.replace(':roomId', roomId));
   };
 
   return (
@@ -73,22 +94,20 @@ const MainScreen: React.FC = () => {
           playsInline></CardMedia>
         <CardContent>{}</CardContent>
         <CardActions className={classes.actions}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="medium"
-            startIcon={<CameraAltRounded />}
-            onClick={openUserMedia}>
-            Open camera & microphone
-          </Button>
-          <Button
-            disabled={!state.isCreateRoomEnabled}
-            variant="contained"
-            color="secondary"
-            size="medium"
-            startIcon={<GroupAddRounded />}>
-            Create room
-          </Button>
+          <div className={classes.btnWrapper}>
+            <Button
+              onClick={handleCreateRoom}
+              disabled={!state.isCreateRoomEnabled || state.loading.createRoom}
+              variant="contained"
+              color="secondary"
+              size="medium"
+              startIcon={<GroupAddRounded />}>
+              Create room
+            </Button>
+            {state.loading.createRoom && (
+              <CircularProgress size={24} className={classes.buttonProgress} />
+            )}
+          </div>
           <Button
             disabled={!state.isJoinRoomEnabled}
             variant="contained"

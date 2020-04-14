@@ -20,8 +20,19 @@ class WebRTC {
   private peerConnection!: RTCPeerConnection;
   private localStream!: MediaStream;
   private remoteStream!: MediaStream;
-  private roomDialog = null;
   private roomId: string | null = null;
+
+  public getLocalStream() {
+    return this.localStream;
+  }
+
+  public getRemoteStream() {
+    return this.remoteStream;
+  }
+
+  public getRoomId() {
+    return this.roomId;
+  }
 
   public async init() {
     if (!this.isInitialized) {
@@ -60,7 +71,13 @@ class WebRTC {
     await this.peerConnection.setLocalDescription(offer);
     // console.log('Created offer:', offer);
 
-    await roomRef.set({offer});
+    const roomWithOffer = {
+      offer: {
+        type: offer.type,
+        sdp: offer.sdp,
+      },
+    };
+    await roomRef.set(roomWithOffer);
     this.roomId = roomRef.id;
     // console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`);
 
@@ -95,6 +112,8 @@ class WebRTC {
         }
       });
     });
+
+    return this.roomId;
   }
 
   public async joinRoom(roomId: string) {
@@ -151,6 +170,32 @@ class WebRTC {
       audio: true,
     });
     this.remoteStream = new MediaStream();
+  }
+
+  public async hangUp() {
+    const tracks = this.localStream.getTracks();
+    tracks.forEach((track) => track.stop());
+
+    if (this.remoteStream) {
+      this.remoteStream.getTracks().forEach((track) => track.stop());
+    }
+
+    if (this.peerConnection) {
+      this.peerConnection.close();
+    }
+
+    if (this.roomId) {
+      const roomRef = db.collection('rooms').doc(this.roomId);
+      const calleeCandidates = await roomRef
+        .collection('callerCandidates')
+        .get();
+      calleeCandidates.forEach(async (candidate) => {
+        await candidate.ref.delete();
+      });
+      await roomRef.delete();
+    }
+
+    document.location.reload(true);
   }
 
   private registerPeerConnectionListeners() {

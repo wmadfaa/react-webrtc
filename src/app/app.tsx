@@ -15,10 +15,10 @@ const App: React.FC = () => {
     <Router>
       <div className={styles.root}>
         <Switch>
-          <Route path={ROUTES.CHAT_ROOM}>
+          <Route exact path={ROUTES.CHAT_ROOM}>
             <ChatRoomScreen />
           </Route>
-          <Route path={ROUTES.MAIN_SCREEN}>
+          <Route exact path={ROUTES.MAIN_SCREEN}>
             <MainScreen />
           </Route>
         </Switch>
