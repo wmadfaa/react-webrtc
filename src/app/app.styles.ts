@@ -4,6 +4,6 @@ export default createUseStyles({
   root: {
     width: '100vw',
     minHeight: '100vh',
-    backgroundColor: '#fff',
+    backgroundColor: '#f2f2f2',
   },
 });

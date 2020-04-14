@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Card from '../../components/card/card.component';
+
 import useStyles from './main.styles';
 
 const MainScreen: React.FC = () => {
@@ -7,7 +9,9 @@ const MainScreen: React.FC = () => {
 
   return (
     <div className={styles.root}>
-      <span>main screen</span>
+      <Card shadow={1}>
+        <h1>test card</h1>
+      </Card>
     </div>
   );
 };
