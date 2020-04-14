@@ -60,7 +60,7 @@ class WebRTC {
     await this.peerConnection.setLocalDescription(offer);
     // console.log('Created offer:', offer);
 
-    await roomRef.set(offer);
+    await roomRef.set({offer});
     this.roomId = roomRef.id;
     // console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`);
 
@@ -89,6 +89,54 @@ class WebRTC {
     roomRef.collection('calleeCandidates').onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
         if (change.type === 'added') {
+          let data = change.doc.data();
+          // console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
+          await this.peerConnection.addIceCandidate(new RTCIceCandidate(data));
+        }
+      });
+    });
+  }
+
+  public async joinRoom(roomId: string) {
+    const roomRef = db.collection('rooms').doc(`${roomId}`);
+    const roomSnapshot = await roomRef.get();
+
+    // console.log('Got room:', roomSnapshot.exists);
+    if (roomSnapshot.exists) {
+      // console.log('Create PeerConnection with configuration: ', this.configuration);
+      this.peerConnection = new RTCPeerConnection(this.configuration);
+      this.registerPeerConnectionListeners();
+      this.localStream
+        .getTracks()
+        .forEach((track) =>
+          this.peerConnection.addTrack(track, this.localStream),
+        );
+    }
+
+    const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
+    this.peerConnection.addEventListener('icecandidate', (event) => {
+      if (!event.candidate) {
+        // console.log('Got final candidate!');
+        return;
+      }
+      // console.log('Got candidate: ', event.candidate);
+      calleeCandidatesCollection.add(event.candidate.toJSON());
+    });
+
+    const offer = roomSnapshot.data()?.offer;
+    console.log('Got offer:', offer);
+    await this.peerConnection.setRemoteDescription(
+      new RTCSessionDescription(offer),
+    );
+    const answer = await this.peerConnection.createAnswer();
+    // console.log('Created answer:', answer);
+    await this.peerConnection.setLocalDescription(answer);
+
+    await roomRef.update({answer});
+
+    roomRef.collection('callerCandidates').onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        if (change.type == 'added') {
           let data = change.doc.data();
           // console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
           await this.peerConnection.addIceCandidate(new RTCIceCandidate(data));
