@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "react-app",
+    "shared-config"
+  ],
+  "plugins": ["prettier"],
+  "rules": {
+    "additional-rule": "warn",
+    "prettier/prettier": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts?(x)"
+      ],
+      "rules": {
+        "additional-typescript-only-rule": "warn"
+      }
+    }
+  ]
+}
