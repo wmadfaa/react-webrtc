@@ -1,9 +1,10 @@
 import {makeStyles} from '@material-ui/core/styles';
 
-export default makeStyles({
+export default makeStyles((theme) => ({
   root: {
+    display: 'flex',
     width: '100vw',
     minHeight: '100vh',
-    backgroundColor: '#f2f2f2',
+    backgroundColor: theme.palette.background.default,
   },
-});
+}));
