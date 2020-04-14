@@ -142,8 +142,16 @@ class WebRTC {
       calleeCandidatesCollection.add(event.candidate.toJSON());
     });
 
+    this.peerConnection.addEventListener('track', (event) => {
+      // console.log('Got remote track:', event.streams[0]);
+      event.streams[0].getTracks().forEach((track) => {
+        // console.log('Add a track to the remoteStream:', track);
+        this.remoteStream.addTrack(track);
+      });
+    });
+
     const offer = roomSnapshot.data()?.offer;
-    console.log('Got offer:', offer);
+    // console.log('Got offer:', offer);
     await this.peerConnection.setRemoteDescription(
       new RTCSessionDescription(offer),
     );
@@ -151,7 +159,13 @@ class WebRTC {
     // console.log('Created answer:', answer);
     await this.peerConnection.setLocalDescription(answer);
 
-    await roomRef.update({answer});
+    const roomWithAnswer = {
+      answer: {
+        type: answer.type,
+        sdp: answer.sdp,
+      },
+    };
+    await roomRef.update(roomWithAnswer);
 
     roomRef.collection('callerCandidates').onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
