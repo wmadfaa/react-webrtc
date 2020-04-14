@@ -1,6 +1,6 @@
-import {createUseStyles} from 'react-jss';
+import {makeStyles} from '@material-ui/core/styles';
 
-export default createUseStyles({
+export default makeStyles({
   root: {
     width: '100vw',
     minHeight: '100vh',
