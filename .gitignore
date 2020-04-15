@@ -10,7 +10,8 @@ client/coverage
 
 # production
 client/build
-
+functions/lib
+functions/typings
 # misc
 .DS_Store
 .env.local

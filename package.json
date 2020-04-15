@@ -6,7 +6,12 @@
   "dependencies": {},
   "scripts": {
     "client:start": "yarn workspace @react-webrtc/client start",
-    "client:build": "yarn workspace @react-webrtc/client build"
+    "client:build": "yarn workspace @react-webrtc/client build",
+    "client:deploy": "yarn workspace @react-webrtc/client deploy",
+    "functions:start": "yarn workspace @react-webrtc/functions start",
+    "functions:build": "yarn workspace @react-webrtc/functions build",
+    "functions:deploy": "yarn workspace @react-webrtc/functions deploy",
+    "deploy": "yarn workspaces run deploy"
   },
   "devDependencies": {
     "@types/node": "^12.0.0",

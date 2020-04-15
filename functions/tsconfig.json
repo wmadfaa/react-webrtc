@@ -7,9 +7,12 @@
     "outDir": "lib",
     "sourceMap": true,
     "target": "es2017",
+    "strict": true,
+    "noEmit": false,
   },
   "compileOnSave": true,
   "include": [
     "src"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }
