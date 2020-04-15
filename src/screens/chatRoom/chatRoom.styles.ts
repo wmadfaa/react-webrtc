@@ -28,4 +28,10 @@ export default makeStyles({
     width: '100vw',
     height: '100vh',
   },
+  callEndBtn: {
+    position: 'absolute',
+    bottom: 32,
+    right: 'calc(50% - 28px)',
+    zIndex: 1,
+  },
 });

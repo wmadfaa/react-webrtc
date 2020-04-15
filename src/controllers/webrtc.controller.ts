@@ -21,9 +21,7 @@ class WebRTC {
   };
 
   public userType: UserType = UserType.CALLEE;
-
   private isInitialized = false;
-
   private peerConnection!: RTCPeerConnection;
   private localStream!: MediaStream;
   private remoteStream!: MediaStream;
@@ -218,7 +216,12 @@ class WebRTC {
       await roomRef.delete();
     }
 
-    document.location.reload(true);
+    this.userType = UserType.CALLEE;
+    this.isInitialized = false;
+    this.peerConnection = new RTCPeerConnection();
+    this.localStream = new MediaStream();
+    this.remoteStream = new MediaStream();
+    this.roomId = null;
   }
 
   private registerPeerConnectionListeners() {
