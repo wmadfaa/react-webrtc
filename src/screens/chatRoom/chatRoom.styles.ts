@@ -14,14 +14,14 @@ export default makeStyles({
     backgroundSize: 'cover',
     overflow: 'hidden',
   },
-  localVideo: {
+  secondaryVideo: {
     position: 'absolute',
     bottom: 0,
     right: 0,
     width: 256,
     zIndex: 1,
   },
-  remoteVideo: {
+  primaryVideo: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -33,5 +33,8 @@ export default makeStyles({
     bottom: 32,
     right: 'calc(50% - 28px)',
     zIndex: 1,
+  },
+  isHidden: {
+    display: 'none',
   },
 });

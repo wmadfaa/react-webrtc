@@ -224,21 +224,38 @@ class WebRTC {
     this.roomId = null;
   }
 
+  // eventListeners
+  public onIceConnectionStateChange = (
+    cb: (connectionState: RTCIceConnectionState) => void,
+  ) => {
+    this.peerConnection.addEventListener('iceconnectionstatechange', () => {
+      cb(this.peerConnection.iceConnectionState);
+    });
+  };
+
   private registerPeerConnectionListeners() {
     this.peerConnection.addEventListener('icegatheringstatechange', () => {
-      // console.log(`ICE gathering state changed: ${this.peerConnection.iceGatheringState}`);
+      // console.log(
+      //   `ICE gathering state changed: ${this.peerConnection.iceGatheringState}`,
+      // );
     });
 
     this.peerConnection.addEventListener('connectionstatechange', () => {
-      // console.log(`Connection state change: ${this.peerConnection.connectionState}`);
+      // console.log(
+      //   `Connection state change: ${this.peerConnection.connectionState}`,
+      // );
     });
 
     this.peerConnection.addEventListener('signalingstatechange', () => {
-      // console.log(`Signaling state change: ${this.peerConnection.signalingState}`);
+      // console.log(
+      //   `Signaling state change: ${this.peerConnection.signalingState}`,
+      // );
     });
 
     this.peerConnection.addEventListener('iceconnectionstatechange ', () => {
-      // console.log(`ICE connection state change: ${this.peerConnection.iceConnectionState}`);
+      // console.log(
+      //   `ICE connection state change: ${this.peerConnection.iceConnectionState}`,
+      // );
     });
   }
 }
