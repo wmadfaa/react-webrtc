@@ -1,40 +1,25 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 export default makeStyles({
+  '@keyframes fadeIn': {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+  },
+
   root: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  video: {
-    display: 'inline-block',
-    verticalAlign: 'middle',
-    backgroundColor: '#000',
-    backgroundSize: 'cover',
+    width: '100%',
+    background: '#16171b',
+    margin: 0,
+    padding: 0,
+    opacity: 0,
+    animation: '$fadeIn ease-in 1',
+    animationFillMode: 'forwards',
+    animationDuration: '0.3s',
     overflow: 'hidden',
-  },
-  secondaryVideo: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 256,
-    zIndex: 1,
-  },
-  primaryVideo: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-  },
-  callEndBtn: {
-    position: 'absolute',
-    bottom: 32,
-    right: 'calc(50% - 28px)',
-    zIndex: 1,
-  },
-  isHidden: {
-    display: 'none',
   },
 });
